@@ -15,13 +15,12 @@ async fn main() -> std::io::Result<()> {
     telemetry::init_subscriber(subscriber);
 
     let configuration = configuration::read_configuration().expect("Failed to read configuration.");
-    let db_connection_pool = PgPool::connect(
+    let db_connection_pool = PgPool::connect_lazy(
         configuration
             .database
             .as_connection_string()
             .expose_secret(),
     )
-    .await
     .expect("Could not connect to the database");
     let address = format!("127.0.0.1:{}", configuration.application_port);
     let tcp_listener = TcpListener::bind(address).expect("could not bind to an address");
